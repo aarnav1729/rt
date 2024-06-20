@@ -10,7 +10,6 @@ const App = () => {
   const [members, setMembers] = useState([]);
   const [attendance, setAttendance] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => {
     axios.get('http://localhost:5000/api/attendance/events')
