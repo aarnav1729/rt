@@ -30,19 +30,47 @@ const markAttendance = async (req, res) => {
       return res.status(404).json({ message: 'Event not found' });
     }
 
-    const presentMembers = [];
-    const absentMembers = [];
-    attendance.forEach(member => {
-      if (member.present) {
-        presentMembers.push(member.email);
-        sendEmail(member.email, 'Attendance Recorded', 'Your attendance was recorded, thank you for coming.');
-      } else {
-        absentMembers.push(member.email);
-        sendEmail(member.email, 'Missed Attendance', 'We missed you, hope you\'re at the next one.');
-      }
-    });
+    const existingAttendance = await Attendance.findOne({ eventId });
+    const newAttendanceRecords = [];
 
-    await Attendance.create({ eventId, attendance });
+    if (existingAttendance) {
+      attendance.forEach(member => {
+        const existingRecord = existingAttendance.attendance.find(record => record.email === member.email);
+        if (existingRecord) {
+          if (!existingRecord.emailSent) {
+            if (member.present) {
+              sendEmail(member.email, 'Attendance Recorded', 'Your attendance was recorded, thank you for coming.');
+            } else {
+              sendEmail(member.email, 'Missed Attendance', 'We missed you, hope you\'re at the next one.');
+            }
+            existingRecord.emailSent = true;
+          }
+          existingRecord.present = member.present;
+        } else {
+          newAttendanceRecords.push({
+            email: member.email,
+            present: member.present,
+            emailSent: false,
+          });
+        }
+      });
+      existingAttendance.attendance = [...existingAttendance.attendance, ...newAttendanceRecords];
+      await existingAttendance.save();
+    } else {
+      attendance.forEach(member => {
+        if (member.present) {
+          sendEmail(member.email, 'Attendance Recorded', 'Your attendance was recorded, thank you for coming.');
+        } else {
+          sendEmail(member.email, 'Missed Attendance', 'We missed you, hope you\'re at the next one.');
+        }
+        newAttendanceRecords.push({
+          email: member.email,
+          present: member.present,
+          emailSent: true,
+        });
+      });
+      await Attendance.create({ eventId, attendance: newAttendanceRecords });
+    }
 
     res.status(200).json({ message: 'Attendance recorded and emails sent' });
   } catch (error) {

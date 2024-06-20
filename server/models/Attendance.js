@@ -1,16 +1,15 @@
 const mongoose = require('mongoose');
 
-const attendanceSchema = new mongoose.Schema({
-  eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'Event', required: true },
+const AttendanceSchema = new mongoose.Schema({
+  eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'Event' },
   attendance: [
     {
       email: { type: String, required: true },
       present: { type: Boolean, required: true },
-    }
+      emailSent: { type: Boolean, default: false },
+    },
   ],
   createdAt: { type: Date, default: Date.now },
 });
 
-const Attendance = mongoose.model('Attendance', attendanceSchema);
-
-module.exports = Attendance;
+module.exports = mongoose.model('Attendance', AttendanceSchema);
