@@ -4,6 +4,11 @@ import EventSelector from './components/eventSelector';
 import MemberList from './components/memberList';
 import SearchBar from './components/SearchBar';
 
+// Create an Axios instance with the Render backend URL
+const api = axios.create({
+  baseURL: 'https://rt-1a2q.onrender.com',
+});
+
 const App = () => {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -12,7 +17,7 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/attendance/events')
+    api.get('/api/attendance/events')
       .then(res => {
         console.log('Events fetched:', res.data);
         setEvents(res.data);
@@ -22,7 +27,7 @@ const App = () => {
 
   useEffect(() => {
     if (selectedEvent) {
-      axios.get('http://localhost:5000/api/attendance/members')
+      api.get('/api/attendance/members')
         .then(res => {
           console.log('Members fetched:', res.data);
           setMembers(res.data);
@@ -56,7 +61,7 @@ const App = () => {
       present: attendance[member._id] || false,
     }));
 
-    axios.post('http://localhost:5000/api/attendance/mark', {
+    api.post('/api/attendance/mark', {
       eventId: selectedEvent,
       attendance: attendanceList,
     })
