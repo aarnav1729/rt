@@ -35,15 +35,14 @@ const markAttendance = async (req, res) => {
     attendance.forEach(member => {
       if (member.present) {
         presentMembers.push(member.email);
+        sendEmail(member.email, 'Attendance Recorded', 'Your attendance was recorded, thank you for coming.');
       } else {
         absentMembers.push(member.email);
+        sendEmail(member.email, 'Missed Attendance', 'We missed you, hope you\'re at the next one.');
       }
     });
 
     await Attendance.create({ eventId, attendance });
-
-    sendEmail(presentMembers, 'Attendance Appreciated', 'Thank you for attending the event.');
-    sendEmail(absentMembers, 'You Were Missed', 'We missed you at the event. Hope to see you next time.');
 
     res.status(200).json({ message: 'Attendance recorded and emails sent' });
   } catch (error) {
