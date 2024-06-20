@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import EventSelector from './components/eventSelector';
 import MemberList from './components/memberList';
+import SearchBar from './components/SearchBar';
 
 const App = () => {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [members, setMembers] = useState([]);
   const [attendance, setAttendance] = useState({});
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => {
     axios.get('http://localhost:5000/api/attendance/events')
@@ -62,24 +65,32 @@ const App = () => {
     .catch(err => console.error('Error submitting attendance:', err));
   };
 
+  const filteredMembers = members.filter(member => 
+    member.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <div className="container mx-auto p-4">
-      <EventSelector events={events} onSelect={setSelectedEvent} />
-      {selectedEvent && (
-        <MemberList 
-          members={members} 
-          attendance={attendance} 
-          onAttendanceChange={handleAttendanceChange} 
-        />
-      )}
-      {selectedEvent && (
-        <button 
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded" 
-          onClick={handleSubmit}
-        >
-          Submit Attendance
-        </button>
-      )}
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
+        <h1 className="text-3xl font-bold mb-4 text-center text-blue-600">Rotary Club Attendance</h1>
+        <EventSelector events={events} onSelect={setSelectedEvent} />
+        <SearchBar onSearch={setSearchTerm} />
+        {selectedEvent && (
+          <div className="mt-4">
+            <MemberList 
+              members={filteredMembers} 
+              attendance={attendance} 
+              onAttendanceChange={handleAttendanceChange} 
+            />
+            <button 
+              className="mt-4 w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700" 
+              onClick={handleSubmit}
+            >
+              Submit Attendance
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
