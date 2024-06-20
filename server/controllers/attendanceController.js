@@ -39,9 +39,9 @@ const markAttendance = async (req, res) => {
         if (existingRecord) {
           if (!existingRecord.emailSent) {
             if (member.present) {
-              sendEmail(member.email, 'Attendance Recorded', 'Your attendance was recorded, thank you for coming.');
+              sendEmail(member.email, 'Attendance Recorded', 'Your attendance was recorded, thank you for coming.\nYou have attended 1/4 events this month!');
             } else {
-              sendEmail(member.email, 'Missed Attendance', 'We missed you, hope you\'re at the next one.');
+              sendEmail(member.email, 'Missed Attendance', 'We missed you, hope you\'re at the next one.\nYou have attended 0/4 events this month!');
             }
             existingRecord.emailSent = true;
           }
@@ -59,9 +59,9 @@ const markAttendance = async (req, res) => {
     } else {
       attendance.forEach(member => {
         if (member.present) {
-          sendEmail(member.email, 'Attendance Recorded', 'Your attendance was recorded, thank you for coming.');
+          sendEmail(member.email, 'Attendance Recorded', 'Your attendance was recorded, thank you for coming.\nYou have attended 1/4 events this month!');
         } else {
-          sendEmail(member.email, 'Missed Attendance', 'We missed you, hope you\'re at the next one.');
+          sendEmail(member.email, 'Missed Attendance', 'We missed you, hope you\'re at the next one.\nYou have attended 0/4 events this month!');
         }
         newAttendanceRecords.push({
           email: member.email,
