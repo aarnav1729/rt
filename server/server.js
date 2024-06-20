@@ -8,11 +8,14 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
-app.use(cors()); // Enable CORS
+app.use(cors());
 
 mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected'))
   .catch((err) => console.error('MongoDB connection error:', err));
+
+// Import and start cron jobs
+require('./cronJobs');
 
 app.use('/api/attendance', attendanceRoutes);
 
