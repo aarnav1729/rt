@@ -1,5 +1,5 @@
 const express = require('express');
-const { getEvents, getMembers, markAttendance } = require('../controllers/attendanceController');
+const { getEvents, getMembers, markAttendance, addMember } = require('../controllers/attendanceController');
 
 const router = express.Router();
 
