@@ -1,6 +1,6 @@
-// AddMemberForm.js
 import React, { useState } from "react";
 import axios from "axios";
+import { FaChevronDown } from 'react-icons/fa'; // Ensure you have react-icons installed
 
 const AddMemberForm = ({ onMemberAdded }) => {
   const [newMember, setNewMember] = useState({ name: "", email: "" });
@@ -24,11 +24,15 @@ const AddMemberForm = ({ onMemberAdded }) => {
 
   return (
     <div className="mt-4">
-      <h2 className="cursor-pointer text-blue-500" onClick={toggleFormVisibility}>
-        Add New Member
-      </h2>
+      <div
+        className="w-full flex items-center justify-between px-4 py-2 bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-700"
+        onClick={toggleFormVisibility}
+      >
+        <span>Add New Member</span>
+        <FaChevronDown className={`transform transition-transform duration-200 ${isFormVisible ? 'rotate-180' : ''}`} />
+      </div>
       {isFormVisible && (
-        <div className="flex flex-col space-y-2 mt-2">
+        <div className="flex flex-col space-y-2 mt-2 pb-4">
           <input
             type="text"
             placeholder="Name"
