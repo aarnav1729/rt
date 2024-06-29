@@ -2,21 +2,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const AddMemberForm = ({ selectedEvent, onMemberAdded }) => {
+const AddMemberForm = ({ onMemberAdded }) => {
   const [newMember, setNewMember] = useState({ name: "", email: "" });
 
   const handleAddMember = async () => {
-    if (!selectedEvent) {
-      alert("Please select an event first");
-      return;
-    }
-
     try {
-      await axios.post("/api/attendance/addMember", {
-        ...newMember,
-        eventId: selectedEvent,
-      });
-      alert("Member added and marked as present");
+      await axios.post("/api/attendance/addMember", newMember);
+      alert("Member added");
       setNewMember({ name: "", email: "" });
       onMemberAdded();
     } catch (error) {

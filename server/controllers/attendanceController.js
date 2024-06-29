@@ -1,7 +1,7 @@
+// attendanceController.js
 const Member = require('../models/Member');
 const Event = require('../models/Event');
 const Attendance = require('../models/Attendance');
-const { sendEmail } = require('../utils/email');
 
 const getEvents = async (req, res) => {
   try {
@@ -79,26 +79,13 @@ const markAttendance = async (req, res) => {
 };
 
 const addMember = async (req, res) => {
-  const { name, email, phone, eventId } = req.body;
+  const { name, email } = req.body;
 
   try {
-    const newMember = new Member({ name, email, phone });
+    const newMember = new Member({ name, email });
     await newMember.save();
 
-    const existingAttendance = await Attendance.findOne({ eventId });
-    if (existingAttendance) {
-      existingAttendance.attendance.push({ email, present: true });
-      await existingAttendance.save();
-    } else {
-      await Attendance.create({
-        eventId,
-        attendance: [{ email, present: true }],
-      });
-    }
-
-    sendEmail(email, 'Attendance Recorded', 'Your attendance was recorded, thank you for coming.');
-
-    res.status(201).json({ message: 'Member added and marked as present' });
+    res.status(201).json({ message: 'Member added' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
