@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import EventSelector from "./components/eventSelector";
 import MemberList from "./components/memberList";
-import AttendanceForm from "./components/AttendanceForm";
+import AddMember from "./components/AddMember";
 import SearchBar from "./components/SearchBar";
 
 // Create an Axios instance with the Render backend URL
@@ -76,6 +76,18 @@ const App = () => {
       .catch((err) => console.error("Error submitting attendance:", err));
   };
 
+  const handleMemberAdded = () => {
+    // Re-fetch members to include the newly added member
+    if (selectedEvent) {
+      api
+        .get("/api/attendance/members")
+        .then((res) => {
+          setMembers(res.data);
+        })
+        .catch((err) => console.error("Error fetching members:", err));
+    }
+  };
+
   const filteredMembers = members.filter((member) =>
     member.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -88,6 +100,7 @@ const App = () => {
         </h1>
         <EventSelector events={events} onSelect={setSelectedEvent} />
         <SearchBar onSearch={setSearchTerm} />
+        <AddMember selectedEvent={selectedEvent} onMemberAdded={handleMemberAdded} />
         {selectedEvent && (
           <div className="mt-4">
             <MemberList
@@ -101,13 +114,6 @@ const App = () => {
             >
               Send Attendance Emails
             </button>
-            <AttendanceForm
-              members={members}
-              attendance={attendance}
-              onAttendanceChange={handleAttendanceChange}
-              onSubmit={handleSubmit}
-              selectedEvent={selectedEvent}
-            />
           </div>
         )}
       </div>
