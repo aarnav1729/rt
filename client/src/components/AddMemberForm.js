@@ -1,7 +1,7 @@
 // AddMemberForm.js
 import React, { useState } from "react";
 import axios from "axios";
-import { FaChevronDown } from 'react-icons/fa'; // Make sure you have react-icons installed
+import { FaChevronDown } from 'react-icons/fa'; 
 
 const AddMemberForm = ({ onMemberAdded }) => {
   const [newMember, setNewMember] = useState({ name: "", email: "" });
