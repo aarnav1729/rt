@@ -5,7 +5,7 @@ import MemberList from "./components/memberList";
 import AddMemberForm from "./components/AddMemberForm";
 import SearchBar from "./components/SearchBar";
 
-// Create an Axios instance with the Render backend URL
+// Create an Axios instance with the correct backend URL
 const api = axios.create({
   baseURL: "https://rt-1a2q.onrender.com",
 });
@@ -100,9 +100,9 @@ const App = () => {
         </h1>
         <EventSelector events={events} onSelect={setSelectedEvent} />
         <SearchBar onSearch={setSearchTerm} />
-        <AddMemberForm selectedEvent={selectedEvent} onMemberAdded={handleMemberAdded} />
         {selectedEvent && (
           <div className="mt-4">
+            <AddMemberForm onMemberAdded={handleMemberAdded} />
             <MemberList
               members={filteredMembers}
               attendance={attendance}
