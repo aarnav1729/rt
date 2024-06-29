@@ -90,7 +90,7 @@ const App = () => {
               className="mt-4 w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700" 
               onClick={handleSubmit}
             >
-              Submit Attendance
+              Send Attendance Emails
             </button>
           </div>
         )}
