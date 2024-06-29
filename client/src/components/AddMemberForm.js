@@ -1,7 +1,8 @@
+// AddMemberForm.js
 import React, { useState } from "react";
 import axios from "axios";
 
-const AddMember = ({ selectedEvent, onMemberAdded }) => {
+const AddMemberForm = ({ selectedEvent, onMemberAdded }) => {
   const [newMember, setNewMember] = useState({ name: "", email: "" });
 
   const handleAddMember = async () => {
@@ -55,4 +56,4 @@ const AddMember = ({ selectedEvent, onMemberAdded }) => {
   );
 };
 
-export default AddMember;
+export default AddMemberForm;

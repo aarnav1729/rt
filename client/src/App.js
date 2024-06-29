@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import EventSelector from "./components/eventSelector";
 import MemberList from "./components/memberList";
-import AddMember from "./components/AddMember";
+import AddMemberForm from "./components/AddMemberForm";
 import SearchBar from "./components/SearchBar";
 
 // Create an Axios instance with the Render backend URL
