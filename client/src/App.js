@@ -100,7 +100,7 @@ const App = () => {
         </h1>
         <EventSelector events={events} onSelect={setSelectedEvent} />
         <SearchBar onSearch={setSearchTerm} />
-        <AddMember selectedEvent={selectedEvent} onMemberAdded={handleMemberAdded} />
+        <AddMemberForm selectedEvent={selectedEvent} onMemberAdded={handleMemberAdded} />
         {selectedEvent && (
           <div className="mt-4">
             <MemberList
