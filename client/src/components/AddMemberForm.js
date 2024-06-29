@@ -7,7 +7,7 @@ const AddMemberForm = ({ onMemberAdded }) => {
 
   const handleAddMember = async () => {
     try {
-      await axios.post("/api/attendance/addMember", newMember);
+      await axios.post("https://rt-1a2q.onrender.com/api/attendance/addMember", newMember); // Ensure this URL is correct
       alert("Member added");
       setNewMember({ name: "", email: "" });
       onMemberAdded();
