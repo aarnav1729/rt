@@ -78,4 +78,30 @@ const markAttendance = async (req, res) => {
   }
 };
 
-module.exports = { getEvents, getMembers, markAttendance };
+const addMember = async (req, res) => {
+  const { name, email, phone, eventId } = req.body;
+
+  try {
+    const newMember = new Member({ name, email, phone });
+    await newMember.save();
+
+    const existingAttendance = await Attendance.findOne({ eventId });
+    if (existingAttendance) {
+      existingAttendance.attendance.push({ email, present: true });
+      await existingAttendance.save();
+    } else {
+      await Attendance.create({
+        eventId,
+        attendance: [{ email, present: true }],
+      });
+    }
+
+    sendEmail(email, 'Attendance Recorded', 'Your attendance was recorded, thank you for coming.');
+
+    res.status(201).json({ message: 'Member added and marked as present' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { getEvents, getMembers, markAttendance, addMember };
