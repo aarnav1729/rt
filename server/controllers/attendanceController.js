@@ -131,4 +131,4 @@ const updateEvent = async (req, res) => {
   }
 };
 
-module.exports = { getEvents, getMembers, markAttendance, addMember, createEvent };
+module.exports = { getEvents, getMembers, markAttendance, addMember, createEvent, updateEvent };
