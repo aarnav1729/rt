@@ -1,11 +1,13 @@
 const express = require('express');
-const { getEvents, getMembers, markAttendance, addMember } = require('../controllers/attendanceController');
+const { getEvents, getMembers, markAttendance, addMember, createEvent, updateEvent } = require('../controllers/attendanceController');
 
 const router = express.Router();
 
 router.get('/events', getEvents);
 router.get('/members', getMembers);
 router.post('/mark', markAttendance);
-router.post('/addMember', addMember);
+router.post('/member', addMember);
+router.post('/event', createEvent);
+router.put('/event/:id', updateEvent);
 
 module.exports = router;
