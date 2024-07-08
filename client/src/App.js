@@ -49,16 +49,67 @@ const App = () => {
     }
   };
 
-  const handleAttendanceChange = (memberId, present) => {
-    const newAttendance = {
-      ...attendance,
-      [memberId]: present,
-    };
-    setAttendance(newAttendance);
-    localStorage.setItem(
-      `attendance_${selectedEvent}`,
-      JSON.stringify(newAttendance)
-    );
+  const getCurrentLocation = () => {
+    return new Promise((resolve, reject) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            resolve({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            });
+          },
+          (error) => {
+            reject(error);
+          }
+        );
+      } else {
+        reject(new Error("Geolocation is not supported by this browser."));
+      }
+    });
+  };
+
+  const isWithinRange = (currentLocation, targetLocation, range = 0.1) => {
+    const toRadians = (degrees) => degrees * (Math.PI / 180);
+    const distance =
+      6371 *
+      Math.acos(
+        Math.cos(toRadians(currentLocation.latitude)) *
+          Math.cos(toRadians(targetLocation.latitude)) *
+          Math.cos(
+            toRadians(targetLocation.longitude) -
+              toRadians(currentLocation.longitude)
+          ) +
+          Math.sin(toRadians(currentLocation.latitude)) *
+            Math.sin(toRadians(targetLocation.latitude))
+      );
+    return distance <= range;
+  };
+
+  const handleAttendanceChange = async (memberId, present) => {
+    try {
+      const currentLocation = await getCurrentLocation();
+      const eventLocation = {
+        latitude: selectedEvent.latitude,
+        longitude: selectedEvent.longitude,
+      };
+      if (isWithinRange(currentLocation, eventLocation)) {
+        const newAttendance = {
+          ...attendance,
+          [memberId]: present,
+        };
+        setAttendance(newAttendance);
+        localStorage.setItem(
+          `attendance_${selectedEvent._id}`,
+          JSON.stringify(newAttendance)
+        );
+      } else {
+        alert("You are not within the event location range.");
+      }
+    } catch (error) {
+      console.error("Error getting location:", error);
+      alert("Failed to get your current location.");
+    }
   };
 
   const handleSubmit = () => {
@@ -69,7 +120,7 @@ const App = () => {
 
     api
       .post("/api/attendance/mark", {
-        eventId: selectedEvent,
+        eventId: selectedEvent._id,
         attendance: attendanceList,
       })
       .then(() => alert("Attendance submitted successfully!"))

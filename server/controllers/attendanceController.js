@@ -1,7 +1,7 @@
-// attendanceController.js
 const Member = require('../models/Member');
 const Event = require('../models/Event');
 const Attendance = require('../models/Attendance');
+const { sendEmail } = require('../utils/email');
 
 const getEvents = async (req, res) => {
   try {
@@ -91,4 +91,22 @@ const addMember = async (req, res) => {
   }
 };
 
-module.exports = { getEvents, getMembers, markAttendance, addMember };
+const createEvent = async (req, res) => {
+  const { name, date, latitude, longitude } = req.body;
+
+  const event = new Event({
+    name,
+    date,
+    latitude,
+    longitude,
+  });
+
+  try {
+    await event.save();
+    res.status(201).json(event);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+module.exports = { getEvents, getMembers, markAttendance, addMember, createEvent };
