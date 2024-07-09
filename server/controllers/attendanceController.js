@@ -1,6 +1,7 @@
 const Member = require('../models/Member');
 const Event = require('../models/Event');
 const Attendance = require('../models/Attendance');
+const { sendEmail } = require('../utils/email'); // Import sendEmail function
 
 const getEvents = async (req, res) => {
   try {
@@ -25,7 +26,7 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
   const φ1 = lat1 * Math.PI / 180; // φ, λ in radians
   const φ2 = lat2 * Math.PI / 180;
   const Δφ = (lat2 - lat1) * Math.PI / 180;
-  const Δλ = (lon2 - lon1) * Math.PI / 180;
+  const Δλ = (lon1 - lon2) * Math.PI / 180;
 
   const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
     Math.cos(φ1) * Math.cos(φ2) *
