@@ -29,6 +29,37 @@ const AttendanceForm = ({
     }
   };
 
+  const handleSubmitWithLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const { latitude, longitude } = position.coords;
+      const attendanceList = members.map((member) => ({
+        email: member.email,
+        present: attendance[member._id] || false,
+      }));
+
+      try {
+        await axios.post("/api/attendance/mark", {
+          eventId: selectedEvent,
+          attendance: attendanceList,
+          latitude,
+          longitude,
+        });
+        alert("Attendance submitted successfully!");
+      } catch (err) {
+        console.error("Error submitting attendance:", err);
+        alert("Failed to submit attendance");
+      }
+    }, (error) => {
+      console.error("Error getting location:", error);
+      alert("Failed to get your location");
+    });
+  };
+
   return (
     <div>
       <h2>Attendance Form</h2>
@@ -47,7 +78,7 @@ const AttendanceForm = ({
       </div>
       <button
         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-        onClick={onSubmit}
+        onClick={handleSubmitWithLocation}
       >
         Submit Attendance
       </button>

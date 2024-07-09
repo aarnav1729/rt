@@ -5,7 +5,6 @@ import MemberList from "./components/memberList";
 import AddMemberForm from "./components/AddMemberForm";
 import SearchBar from "./components/SearchBar";
 
-// Create an Axios instance with the correct backend URL
 const api = axios.create({
   baseURL: "https://rt-1a2q.onrender.com",
 });

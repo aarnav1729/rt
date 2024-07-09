@@ -1,4 +1,3 @@
-// attendanceController.js
 const Member = require('../models/Member');
 const Event = require('../models/Event');
 const Attendance = require('../models/Attendance');
@@ -21,13 +20,36 @@ const getMembers = async (req, res) => {
   }
 };
 
+const calculateDistance = (lat1, lon1, lat2, lon2) => {
+  const R = 6371e3; // metres
+  const φ1 = lat1 * Math.PI/180; // φ, λ in radians
+  const φ2 = lat2 * Math.PI/180;
+  const Δφ = (lat2-lat1) * Math.PI/180;
+  const Δλ = (lon2-lon1) * Math.PI/180;
+
+  const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ/2) * Math.sin(Δλ/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+  const d = R * c; // in metres
+  return d;
+}
+
 const markAttendance = async (req, res) => {
-  const { eventId, attendance } = req.body;
+  const { eventId, attendance, latitude, longitude } = req.body;
 
   try {
     const event = await Event.findById(eventId);
     if (!event) {
       return res.status(404).json({ message: 'Event not found' });
+    }
+
+    // Validate the user's location
+    const distance = calculateDistance(event.latitude, event.longitude, latitude, longitude);
+    const oneMileInMeters = 1609.34;
+    if (distance > oneMileInMeters) {
+      return res.status(400).json({ message: 'You are not within the allowed range to mark attendance' });
     }
 
     const existingAttendance = await Attendance.findOne({ eventId });
