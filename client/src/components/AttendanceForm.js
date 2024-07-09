@@ -5,7 +5,6 @@ const AttendanceForm = ({
   members,
   attendance,
   onAttendanceChange,
-  onSubmit,
   selectedEvent,
 }) => {
   const [newMember, setNewMember] = useState({ name: "", email: "" });
@@ -42,6 +41,7 @@ const AttendanceForm = ({
           ...attendance,
           [memberId]: present,
         };
+
         onAttendanceChange(memberId, present);
 
         const attendanceList = members.map((member) => ({
@@ -75,22 +75,16 @@ const AttendanceForm = ({
       <div>
         {members.map((member) => (
           <div key={member._id} className="flex items-center mb-2">
-            <input
-              type="checkbox"
-              checked={attendance[member._id] || false}
-              onChange={() => handleAttendanceChange(member._id, !attendance[member._id])}
-              className="mr-2"
-            />
-            <label>{member.name}</label>
+            <button
+              className={`px-4 py-2 rounded ${attendance[member._id] ? 'bg-gray-500' : 'bg-green-500 text-white'}`}
+              onClick={() => handleAttendanceChange(member._id, !attendance[member._id])}
+            >
+              {attendance[member._id] ? 'Undo' : 'Present'}
+            </button>
+            <span className="ml-4">{member.name}</span>
           </div>
         ))}
       </div>
-      <button
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-        onClick={onSubmit}
-      >
-        Submit Attendance
-      </button>
       <h2 className="mt-4">Add New Member</h2>
       <div className="flex flex-col space-y-2">
         <input
