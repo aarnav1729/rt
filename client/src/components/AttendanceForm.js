@@ -28,7 +28,7 @@ const AttendanceForm = ({
     }
   };
 
-  const handleAttendanceChange = (memberId, present) => {
+  const handleAttendanceChange = (memberId) => {
     if (!navigator.geolocation) {
       alert("Geolocation is not supported by your browser");
       return;
@@ -39,24 +39,21 @@ const AttendanceForm = ({
         const { latitude, longitude } = position.coords;
         const newAttendance = {
           ...attendance,
-          [memberId]: present,
+          [memberId]: !attendance[memberId],
         };
-
-        onAttendanceChange(memberId, present);
-
-        const attendanceList = members.map((member) => ({
-          email: member.email,
-          present: newAttendance[member._id] || false,
-        }));
 
         try {
           await axios.post("/api/attendance/mark", {
             eventId: selectedEvent,
-            attendance: attendanceList,
+            attendance: Object.keys(newAttendance).map(id => ({
+              email: members.find(member => member._id === id).email,
+              present: newAttendance[id]
+            })),
             latitude,
             longitude,
           });
           alert("Attendance marked successfully!");
+          onAttendanceChange(memberId, newAttendance[memberId]);
         } catch (err) {
           console.error("Error marking attendance:", err);
           alert("Failed to mark attendance");
@@ -77,7 +74,7 @@ const AttendanceForm = ({
           <div key={member._id} className="flex items-center mb-2">
             <button
               className={`px-4 py-2 rounded ${attendance[member._id] ? 'bg-gray-500' : 'bg-green-500 text-white'}`}
-              onClick={() => handleAttendanceChange(member._id, !attendance[member._id])}
+              onClick={() => handleAttendanceChange(member._id)}
             >
               {attendance[member._id] ? 'Undo' : 'Present'}
             </button>
