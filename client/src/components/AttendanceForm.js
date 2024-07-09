@@ -29,35 +29,44 @@ const AttendanceForm = ({
     }
   };
 
-  const handleSubmitWithLocation = () => {
+  const handleAttendanceChange = (memberId, present) => {
     if (!navigator.geolocation) {
       alert("Geolocation is not supported by your browser");
       return;
     }
 
-    navigator.geolocation.getCurrentPosition(async (position) => {
-      const { latitude, longitude } = position.coords;
-      const attendanceList = members.map((member) => ({
-        email: member.email,
-        present: attendance[member._id] || false,
-      }));
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        const newAttendance = {
+          ...attendance,
+          [memberId]: present,
+        };
+        onAttendanceChange(memberId, present);
 
-      try {
-        await axios.post("/api/attendance/mark", {
-          eventId: selectedEvent,
-          attendance: attendanceList,
-          latitude,
-          longitude,
-        });
-        alert("Attendance submitted successfully!");
-      } catch (err) {
-        console.error("Error submitting attendance:", err);
-        alert("Failed to submit attendance");
+        const attendanceList = members.map((member) => ({
+          email: member.email,
+          present: newAttendance[member._id] || false,
+        }));
+
+        try {
+          await axios.post("/api/attendance/mark", {
+            eventId: selectedEvent,
+            attendance: attendanceList,
+            latitude,
+            longitude,
+          });
+          alert("Attendance marked successfully!");
+        } catch (err) {
+          console.error("Error marking attendance:", err);
+          alert("Failed to mark attendance");
+        }
+      },
+      (error) => {
+        console.error("Error getting location:", error);
+        alert("Failed to get your location");
       }
-    }, (error) => {
-      console.error("Error getting location:", error);
-      alert("Failed to get your location");
-    });
+    );
   };
 
   return (
@@ -69,7 +78,7 @@ const AttendanceForm = ({
             <input
               type="checkbox"
               checked={attendance[member._id] || false}
-              onChange={() => onAttendanceChange(member._id)}
+              onChange={() => handleAttendanceChange(member._id, !attendance[member._id])}
               className="mr-2"
             />
             <label>{member.name}</label>
@@ -78,7 +87,7 @@ const AttendanceForm = ({
       </div>
       <button
         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-        onClick={handleSubmitWithLocation}
+        onClick={onSubmit}
       >
         Submit Attendance
       </button>
