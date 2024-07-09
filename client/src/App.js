@@ -49,14 +49,44 @@ const App = () => {
   };
 
   const handleAttendanceChange = (memberId, present) => {
-    const newAttendance = {
-      ...attendance,
-      [memberId]: present,
-    };
-    setAttendance(newAttendance);
-    localStorage.setItem(
-      `attendance_${selectedEvent}`,
-      JSON.stringify(newAttendance)
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        const newAttendance = {
+          ...attendance,
+          [memberId]: present,
+        };
+
+        try {
+          await api.post("/api/attendance/mark", {
+            eventId: selectedEvent,
+            attendance: Object.keys(newAttendance).map((id) => ({
+              email: members.find((member) => member._id === id).email,
+              present: newAttendance[id],
+            })),
+            latitude,
+            longitude,
+          });
+          alert("Attendance marked successfully!");
+          setAttendance(newAttendance); // Update the attendance state
+          localStorage.setItem(
+            `attendance_${selectedEvent}`,
+            JSON.stringify(newAttendance)
+          );
+        } catch (err) {
+          console.error("Error marking attendance:", err);
+          alert("Failed to mark attendance");
+        }
+      },
+      (error) => {
+        console.error("Error getting location:", error);
+        alert("Failed to get your location");
+      }
     );
   };
 
