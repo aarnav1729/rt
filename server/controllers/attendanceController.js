@@ -46,9 +46,8 @@ const markAttendance = async (req, res) => {
       return res.status(404).json({ message: 'Event not found' });
     }
 
-    // Validate the user's location
     const distance = calculateDistance(event.latitude, event.longitude, latitude, longitude);
-    const twoMilesInMeters = 3218.69; // 2 miles in meters
+    const twoMilesInMeters = 3218.69;
     if (distance > twoMilesInMeters) {
       return res.status(400).json({ message: 'You are not within the allowed range to mark attendance' });
     }
@@ -60,14 +59,6 @@ const markAttendance = async (req, res) => {
       attendance.forEach(member => {
         const existingRecord = existingAttendance.attendance.find(record => record.email === member.email);
         if (existingRecord) {
-          if (!existingRecord.emailSent) {
-            if (member.present) {
-              sendEmail(member.email, 'Attendance Recorded', 'Your attendance was recorded, thank you for coming.\nYou have attended 1/4 events this month!');
-            } else {
-              sendEmail(member.email, 'Missed Attendance', 'We missed you, hope you\'re at the next one.\nYou have attended 0/4 events this month!');
-            }
-            existingRecord.emailSent = true;
-          }
           existingRecord.present = member.present;
         } else {
           newAttendanceRecords.push({
@@ -81,21 +72,16 @@ const markAttendance = async (req, res) => {
       await existingAttendance.save();
     } else {
       attendance.forEach(member => {
-        if (member.present) {
-          sendEmail(member.email, 'Attendance Recorded', 'Your attendance was recorded, thank you for coming.\nYou have attended 1/4 events this month!');
-        } else {
-          sendEmail(member.email, 'Missed Attendance', 'We missed you, hope you\'re at the next one.\nYou have attended 0/4 events this month!');
-        }
         newAttendanceRecords.push({
           email: member.email,
           present: member.present,
-          emailSent: true,
+          emailSent: false,
         });
       });
       await Attendance.create({ eventId, attendance: newAttendanceRecords });
     }
 
-    res.status(200).json({ message: 'Attendance recorded and emails sent' });
+    res.status(200).json({ message: 'Attendance recorded' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

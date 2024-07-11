@@ -1,3 +1,4 @@
+// App.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import EventSelector from "./components/eventSelector";
@@ -73,7 +74,7 @@ const App = () => {
             longitude,
           });
           alert("Attendance marked successfully!");
-          setAttendance(newAttendance); // Update the attendance state
+          setAttendance(newAttendance);
           localStorage.setItem(
             `attendance_${selectedEvent}`,
             JSON.stringify(newAttendance)
@@ -95,18 +96,34 @@ const App = () => {
       email: member.email,
       present: attendance[member._id] || false,
     }));
-
+  
     api
       .post("/api/attendance/mark", {
         eventId: selectedEvent,
         attendance: attendanceList,
       })
-      .then(() => alert("Attendance submitted successfully!"))
+      .then(() => {
+        attendanceList.forEach(member => {
+          if (member.present) {
+            api.post("/api/send-email", {
+              email: member.email,
+              subject: 'Attendance Recorded',
+              text: 'Your attendance was recorded, thank you for coming.\nYou have attended 1/4 events this month!',
+            });
+          } else {
+            api.post("/api/send-email", {
+              email: member.email,
+              subject: 'Missed Attendance',
+              text: 'We missed you, hope you\'re at the next one.\nYou have attended 0/4 events this month!',
+            });
+          }
+        });
+        alert("Attendance submitted and emails sent successfully!");
+      })
       .catch((err) => console.error("Error submitting attendance:", err));
-  };
+  };  
 
   const handleMemberAdded = () => {
-    // Re-fetch members to include the newly added member
     if (selectedEvent) {
       api
         .get("/api/attendance/members")
