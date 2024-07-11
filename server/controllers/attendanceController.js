@@ -1,7 +1,7 @@
 const Member = require('../models/Member');
 const Event = require('../models/Event');
 const Attendance = require('../models/Attendance');
-const { sendEmail } = require('../utils/email'); 
+const { sendEmail } = require('../utils/email');
 
 const getEvents = async (req, res) => {
   try {
@@ -35,7 +35,7 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
 
   const d = R * c;
   return d;
-}
+};
 
 const markAttendance = async (req, res) => {
   const { eventId, attendance, latitude, longitude } = req.body;
@@ -81,7 +81,7 @@ const markAttendance = async (req, res) => {
       await Attendance.create({ eventId, attendance: newAttendanceRecords });
     }
 
-    res.status(200).json({ message: 'Attendance recorded' });
+    res.status(200).json({ message: 'Attendance marked successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -100,4 +100,23 @@ const addMember = async (req, res) => {
   }
 };
 
-module.exports = { getEvents, getMembers, markAttendance, addMember };
+const sendEmails = async (req, res) => {
+  const { eventId, attendance } = req.body;
+
+  try {
+    attendance.forEach(member => {
+      if (!member.emailSent) {
+        const emailContent = member.present
+          ? 'Your attendance was recorded, thank you for coming.\nYou have attended 1/4 events this month!'
+          : 'We missed you, hope you\'re at the next one.\nYou have attended 0/4 events this month!';
+        sendEmail(member.email, member.present ? 'Attendance Recorded' : 'Missed Attendance', emailContent);
+      }
+    });
+
+    res.status(200).json({ message: 'Emails sent successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error sending emails', error: error.message });
+  }
+};
+
+module.exports = { getEvents, getMembers, markAttendance, addMember, sendEmails };
