@@ -3,7 +3,6 @@ const Attendance = require('./models/Attendance');
 const Member = require('./models/Member');
 const { sendEmail } = require('./utils/email');
 
-// Schedule a job to run at the end of every month
 cron.schedule('0 0 1 * *', async () => {
   try {
     const members = await Member.find();
