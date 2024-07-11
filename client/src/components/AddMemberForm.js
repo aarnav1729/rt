@@ -33,7 +33,7 @@ const AddMemberForm = ({ onMemberAdded }) => {
         <FaChevronDown className={`transform transition-transform duration-200 ${isFormVisible ? 'rotate-180' : ''}`} />
       </button>
       {isFormVisible && (
-        <div className="flex flex-col space-y-2 mt-2 pb-4">  {/* Added padding-bottom */}
+        <div className="flex flex-col space-y-2 mt-2 pb-4"> 
           <input
             type="text"
             placeholder="Name"
