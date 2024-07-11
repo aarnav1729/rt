@@ -109,7 +109,7 @@ const App = () => {
           .catch((err) => console.error("Error sending emails:", err));
       })
       .catch((err) => console.error("Error submitting attendance:", err));
-  };  
+  };    
 
   const handleMemberAdded = () => {
     if (selectedEvent) {
