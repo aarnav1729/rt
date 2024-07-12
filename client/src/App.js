@@ -67,17 +67,13 @@ const App = () => {
           const membersWithId = Object.keys(newAttendance).map((id) => {
             const member = members.find((m) => m._id === id);
             if (!member) {
-              console.error(`Member with id ${id} not found`);
-              return null;
+              throw new Error(`Member with id ${id} not found`);
             }
             return {
               email: member.email,
               present: newAttendance[id],
             };
-          }).filter(member => member !== null); // Filter out null values
-
-          console.log("New attendance:", newAttendance);
-          console.log("Members with ID:", membersWithId);
+          });
 
           await api.post("/api/attendance/mark", {
             eventId: selectedEvent,
