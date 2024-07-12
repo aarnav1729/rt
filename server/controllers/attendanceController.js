@@ -107,8 +107,8 @@ const sendEmails = async (req, res) => {
     for (const member of attendance) {
       if (!member.emailSent) {
         const emailContent = member.present
-          ? 'Your attendance was recorded, thank you for coming.\nYou have attended 1/4 events this month!'
-          : 'We missed you, hope you\'re at the next one.\nYou have attended 0/4 events this month!';
+          ? 'Your attendance was recorded, thank you for coming.\nYou have attended 1/1 events this month!\nYou will have 100% attendance at this rate!'
+          : 'We missed you, hope you\'re at the next one.\nYou have attended 0/1 events this month!\nYou will have 0% attendance at this rate!';
         await sendEmail(member.email, member.present ? 'Attendance Recorded' : 'Missed Attendance', emailContent);
       }
     }
