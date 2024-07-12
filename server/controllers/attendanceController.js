@@ -104,14 +104,14 @@ const sendEmails = async (req, res) => {
   const { eventId, attendance } = req.body;
 
   try {
-    attendance.forEach(member => {
+    for (const member of attendance) {
       if (!member.emailSent) {
         const emailContent = member.present
           ? 'Your attendance was recorded, thank you for coming.\nYou have attended 1/4 events this month!'
           : 'We missed you, hope you\'re at the next one.\nYou have attended 0/4 events this month!';
-        sendEmail(member.email, member.present ? 'Attendance Recorded' : 'Missed Attendance', emailContent);
+        await sendEmail(member.email, member.present ? 'Attendance Recorded' : 'Missed Attendance', emailContent);
       }
-    });
+    }
 
     res.status(200).json({ message: 'Emails sent successfully' });
   } catch (error) {
