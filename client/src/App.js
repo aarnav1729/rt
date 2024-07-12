@@ -96,7 +96,7 @@ const App = () => {
       email: member.email,
       present: attendance[member._id] || false,
     }));
-
+  
     api
       .post("/api/attendance/mark", {
         eventId: selectedEvent,
@@ -106,10 +106,16 @@ const App = () => {
         api
           .post("/api/attendance/sendEmails", { eventId: selectedEvent, attendance: attendanceList })
           .then(() => alert("Attendance submitted and emails sent successfully!"))
-          .catch((err) => console.error("Error sending emails:", err));
+          .catch((err) => {
+            console.error("Error sending emails:", err);
+            alert("Failed to send emails");
+          });
       })
-      .catch((err) => console.error("Error submitting attendance:", err));
-  };
+      .catch((err) => {
+        console.error("Error submitting attendance:", err);
+        alert("Failed to submit attendance");
+      });
+  };  
 
   const handleMemberAdded = () => {
     if (selectedEvent) {

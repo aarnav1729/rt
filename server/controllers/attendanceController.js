@@ -115,6 +115,7 @@ const sendEmails = async (req, res) => {
 
     res.status(200).json({ message: 'Emails sent successfully' });
   } catch (error) {
+    console.error('Error sending emails:', error); // Log the detailed error
     res.status(500).json({ message: 'Error sending emails', error: error.message });
   }
 };
