@@ -64,12 +64,23 @@ const App = () => {
         };
 
         try {
+          const membersWithId = Object.keys(newAttendance).map((id) => {
+            const member = members.find((m) => m._id === id);
+            if (!member) {
+              console.error(`Member with id ${id} not found`);
+            }
+            return {
+              email: member?.email, // Ensure email is fetched correctly
+              present: newAttendance[id],
+            };
+          });
+
+          console.log("New attendance:", newAttendance);
+          console.log("Members with ID:", membersWithId);
+
           await api.post("/api/attendance/mark", {
             eventId: selectedEvent,
-            attendance: Object.keys(newAttendance).map((id) => ({
-              email: members.find((member) => member._id === id).email,
-              present: newAttendance[id],
-            })),
+            attendance: membersWithId,
             latitude,
             longitude,
           });
@@ -96,7 +107,7 @@ const App = () => {
       email: member.email,
       present: attendance[member._id] || false,
     }));
-  
+
     api
       .post("/api/attendance/mark", {
         eventId: selectedEvent,
@@ -115,7 +126,7 @@ const App = () => {
         console.error("Error submitting attendance:", err);
         alert("Failed to submit attendance");
       });
-  };  
+  };
 
   const handleMemberAdded = () => {
     if (selectedEvent) {
