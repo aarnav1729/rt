@@ -68,12 +68,13 @@ const App = () => {
             const member = members.find((m) => m._id === id);
             if (!member) {
               console.error(`Member with id ${id} not found`);
+              return null;
             }
             return {
-              email: member?.email, // Ensure email is fetched correctly
+              email: member.email,
               present: newAttendance[id],
             };
-          });
+          }).filter(member => member !== null); // Filter out null values
 
           console.log("New attendance:", newAttendance);
           console.log("Members with ID:", membersWithId);
