@@ -96,7 +96,7 @@ const App = () => {
       email: member.email,
       present: attendance[member._id] || false,
     }));
-  
+
     api
       .post("/api/attendance/mark", {
         eventId: selectedEvent,
@@ -109,7 +109,7 @@ const App = () => {
           .catch((err) => console.error("Error sending emails:", err));
       })
       .catch((err) => console.error("Error submitting attendance:", err));
-  };    
+  };
 
   const handleMemberAdded = () => {
     if (selectedEvent) {
