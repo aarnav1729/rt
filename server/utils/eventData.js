@@ -4,6 +4,7 @@ const seedEvents = async () => {
   const events = [
     { name: 'Induction', date: new Date('2024-06-30'), latitude: 17.432178, longitude: 78.384995 },
     { name: 'Meeting 2', date: new Date('2024-07-12'), latitude: 17.432178, longitude: 78.384995},
+    { name: 'CSR Project', date: new Date('2024-07-23'), latitude: 17.432178, longitude: 78.384995 },
   ];
 
   try {

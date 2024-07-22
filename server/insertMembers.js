@@ -6,6 +6,7 @@ dotenv.config();
 
 const members = [
   { name: 'aarnav', email: 'aarnavsingh836@gmail.com'},
+  { name: 'Chiranjeev Saluja', email: 'saluja@premierenergies.com' },
 ];
 
 const insertMembers = async () => {

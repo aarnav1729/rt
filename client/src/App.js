@@ -75,6 +75,9 @@ const App = () => {
             };
           });
 
+          console.log("New attendance:", newAttendance);
+          console.log("Members with ID:", membersWithId);
+
           await api.post("/api/attendance/mark", {
             eventId: selectedEvent,
             attendance: membersWithId,
