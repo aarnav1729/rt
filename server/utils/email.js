@@ -24,7 +24,7 @@ const createTransporter = async () => {
         clientId: '221550616731-a8f7vihmac254gsti4a4ahkt60ijftqe.apps.googleusercontent.com',
         clientSecret: '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',
         refreshToken: '1//04X91d0TPMs-JCgYIARAAGAQSNwF-L9IroWvIAJS0SRZrraYLlbiTxS2z6vQUXjsDHmDCTW85P3VsdFAP0CcvfKzZh7PebZ7JFcI',
-        accessToken: 'ya29.a0AXooCgsqRdiPgRqaF3EIpWwpU0SBSMQz17gKwXkyHWf0P3q7oLBPIN2KCZAKFHr295-iyrVMZ8kJOm9HqqzaDeDjTUrocIFx-R-7q8x4yH9frAIRkkd-gCbalY-CEb4hUmJwajjr4lVEGJoyadIoCMjmH2ISdaxggAXcaCgYKASQSARISFQHGX2MisJu1VkW2qMJh7fZyra_33w0171',
+        accessToken: accessToken.token,
       },
     });
 
