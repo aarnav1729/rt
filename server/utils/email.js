@@ -5,8 +5,8 @@ const OAuth2 = google.auth.OAuth2;
 
 const createTransporter = async () => {
   const oauth2Client = new OAuth2(
-    '960465863169-99bl4c3t83eqdjim6tdvshr2b2huij06.apps.googleusercontent.com',
-    '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',
+    '221550616731-a8f7vihmac254gsti4a4ahkt60ijftqe.apps.googleusercontent.com',
+    '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',
     'https://developers.google.com/oauthplayground'
   );
 
