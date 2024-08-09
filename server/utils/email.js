@@ -11,7 +11,7 @@ const createTransporter = async () => {
   );
 
   oauth2Client.setCredentials({
-    refresh_token: '1//04FEhn6VMaxQJCgYIARAAGAQSNwF-L9Irm76QPp09_FrXBbNqzoTAXiQvAAgxW9VhxTyhQEWwfW311nL1Svu--_WUfsv1jv4EiXY',
+    refresh_token: '1//04LtZ4fGHRljUCgYIARAAGAQSNwF-L9IrNl7kfaglnsupRWGqDUEd8fDPiS6n7cQxbdNpYzK4ZQ_DY6AT_JZJ1felwxbUS8uFJhM',
   });
 
   try {
@@ -23,7 +23,7 @@ const createTransporter = async () => {
         user: 'aarnavsingh836@gmail.com',
         clientId: '221550616731-a8f7vihmac254gsti4a4ahkt60ijftqe.apps.googleusercontent.com',
         clientSecret: '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',
-        refreshToken: '1//04X91d0TPMs-JCgYIARAAGAQSNwF-L9IroWvIAJS0SRZrraYLlbiTxS2z6vQUXjsDHmDCTW85P3VsdFAP0CcvfKzZh7PebZ7JFcI',
+        refreshToken: '1//04LtZ4fGHRljUCgYIARAAGAQSNwF-L9IrNl7kfaglnsupRWGqDUEd8fDPiS6n7cQxbdNpYzK4ZQ_DY6AT_JZJ1felwxbUS8uFJhM',
         accessToken: accessToken.token,
       },
     });
