@@ -1,11 +1,11 @@
+// tailwind.config.js
 module.exports = {
-  purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
-  darkMode: 'media',
+  content: [
+    './src/**/*.{js,jsx,ts,tsx}',  // Include paths to all of your template files
+    './public/index.html',         // Include other necessary paths
+  ],
   theme: {
-    extend: {},
+    extend: {},                    // Extend the default Tailwind theme
   },
-  variants: {
-    extend: {},
-  },
-  plugins: [],
+  plugins: [],                     // Add any required plugins here
 };
