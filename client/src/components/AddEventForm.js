@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { FaChevronDown } from 'react-icons/fa';
-import { Map, Geocoder } from 'react-map-gl'; // Import Mapbox components
+import { Map, Geocoder } from 'react-map-gl'; 
 
 const MAPBOX_API_KEY = 'pk.eyJ1IjoiYWFycmF0ZWQiLCJhIjoiY20waHh3dDZtMGdzaTJrcTVpYnk3ZndweSJ9.x4zDUvTtDYU_xXbyj5Wohg'; 
 
