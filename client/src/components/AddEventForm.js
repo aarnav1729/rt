@@ -1,21 +1,21 @@
+// src/components/AddEventForm.js
 import React, { useState } from 'react';
 import axios from 'axios';
-import { FaChevronDown } from 'react-icons/fa'; 
-import { useLoadScript, Autocomplete } from '@react-google-maps/api';
+import { FaChevronDown } from 'react-icons/fa';
+import { Map, Geocoder } from 'react-map-gl'; // Import Mapbox components
 
-const libraries = ["places"]; // Load the 'places' library for autocomplete
+const MAPBOX_API_KEY = 'pk.eyJ1IjoiYWFycmF0ZWQiLCJhIjoiY20waHh3dDZtMGdzaTJrcTVpYnk3ZndweSJ9.x4zDUvTtDYU_xXbyj5Wohg'; 
 
 const AddEventForm = () => {
   const [newEvent, setNewEvent] = useState({ name: '', date: '', location: '' });
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [autocomplete, setAutocomplete] = useState(null);
-
-  // Load Google Maps API script
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: 'YOUR_GOOGLE_MAPS_API_KEY', // Replace with your actual Google Maps API key
-    libraries,
+  const [viewport, setViewport] = useState({
+    latitude: 37.7749,
+    longitude: -122.4194,
+    zoom: 10,
   });
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
   const toggleFormVisibility = () => {
     setIsFormVisible(!isFormVisible);
@@ -25,28 +25,28 @@ const AddEventForm = () => {
     try {
       setLoading(true);
 
-      // Use Google Maps Geocoding API to convert location to latitude and longitude
-      const geoResponse = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
+      // Use Mapbox Geocoding API to convert location to latitude and longitude
+      const geoResponse = await axios.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(newEvent.location)}.json`, {
         params: {
-          address: newEvent.location,
-          key: 'YOUR_GOOGLE_MAPS_API_KEY', // Replace with your actual Google Maps API key
+          access_token: MAPBOX_API_KEY,
+          limit: 1,
         },
       });
 
-      if (geoResponse.data.results.length === 0) {
+      if (geoResponse.data.features.length === 0) {
         alert("Unable to find location. Please enter a valid location.");
         setLoading(false);
         return;
       }
 
-      const { lat, lng } = geoResponse.data.results[0].geometry.location; // Extract latitude and longitude
+      const { center } = geoResponse.data.features[0]; // Extract latitude and longitude
 
       // Send event data to backend
       await axios.post('https://rt-1a2q.onrender.com/api/attendance/addEvent', {
         name: newEvent.name,
         date: new Date(newEvent.date),
-        latitude: lat,
-        longitude: lng,
+        latitude: center[1], // Latitude
+        longitude: center[0], // Longitude
       });
 
       alert('Event added successfully');
@@ -59,20 +59,13 @@ const AddEventForm = () => {
     }
   };
 
-  const onLoad = (autocompleteInstance) => {
-    setAutocomplete(autocompleteInstance);
+  const handleLocationChange = (event) => {
+    setNewEvent({ ...newEvent, location: event.target.value });
   };
 
-  const onPlaceChanged = () => {
-    if (autocomplete !== null) {
-      const place = autocomplete.getPlace();
-      setNewEvent({ ...newEvent, location: place.formatted_address });
-    } else {
-      console.log('Autocomplete is not loaded yet!');
-    }
+  const handleGeocoderViewportChange = (viewport) => {
+    setViewport(viewport);
   };
-
-  if (!isLoaded) return <div>Loading...</div>; // Wait for Google Maps API to load
 
   return (
     <div className="mt-4">
@@ -84,7 +77,7 @@ const AddEventForm = () => {
         <FaChevronDown className={`transform transition-transform duration-200 ${isFormVisible ? 'rotate-180' : ''}`} />
       </button>
       {isFormVisible && (
-        <div className="flex flex-col space-y-2 mt-2 pb-4"> 
+        <div className="flex flex-col space-y-2 mt-2 pb-4">
           <input
             type="text"
             placeholder="Event Name"
@@ -99,15 +92,14 @@ const AddEventForm = () => {
             onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
             className="p-2 border rounded"
           />
-          <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
-            <input
-              type="text"
-              placeholder="Event Location"
-              value={newEvent.location}
-              onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })}
-              className="p-2 border rounded"
-            />
-          </Autocomplete>
+          <Geocoder
+            mapboxApiAccessToken={MAPBOX_API_KEY}
+            onViewportChange={handleGeocoderViewportChange}
+            onResult={(result) => setSelectedLocation(result.result.place_name)}
+            placeholder="Enter Event Location"
+            inputValue={newEvent.location}
+            onChange={handleLocationChange}
+          />
           <button
             className="mt-4 px-4 py-2 bg-green-500 text-white rounded"
             onClick={handleAddEvent}
