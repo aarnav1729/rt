@@ -1,11 +1,13 @@
 // src/components/AdminDashboard.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import EventSelector from './EventSelector';
-import MemberList from './MemberList';
+import EventSelector from './eventSelector';
+import MemberList from './memberList';
+import AddMemberForm from './AddMemberForm';
+import SearchBar from './SearchBar';
 
 const api = axios.create({
-  baseURL: 'https://rt-1a2q.onrender.com', // Adjust base URL as necessary
+  baseURL: 'https://rt-1a2q.onrender.com', 
 });
 
 const AdminDashboard = () => {
@@ -13,6 +15,7 @@ const AdminDashboard = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [members, setMembers] = useState([]);
   const [attendance, setAttendance] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     api.get('/api/attendance/events')
@@ -53,11 +56,30 @@ const AdminDashboard = () => {
 
       alert('Attendance marked successfully by admin!');
       setAttendance(newAttendance);
+      localStorage.setItem(
+        `attendance_${selectedEvent}`,
+        JSON.stringify(newAttendance)
+      );
     } catch (err) {
       console.error('Error marking attendance:', err);
       alert('Failed to mark attendance');
     }
   };
+
+  const handleMemberAdded = () => {
+    if (selectedEvent) {
+      api
+        .get("/api/attendance/members")
+        .then((res) => {
+          setMembers(res.data);
+        })
+        .catch((err) => console.error("Error fetching members:", err));
+    }
+  };
+
+  const filteredMembers = members.filter((member) =>
+    member.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -66,13 +88,21 @@ const AdminDashboard = () => {
           Admin Dashboard
         </h1>
         <EventSelector events={events} onSelect={setSelectedEvent} />
+        <SearchBar onSearch={setSearchTerm} />
         {selectedEvent && (
           <div className="mt-4">
+            <AddMemberForm onMemberAdded={handleMemberAdded} />
             <MemberList
-              members={members}
+              members={filteredMembers}
               attendance={attendance}
               onAttendanceChange={handleAttendanceChange}
             />
+            <button
+              className="mt-4 w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+              onClick={() => alert("Attendance data saved successfully!")}
+            >
+              Save Attendance Data
+            </button>
           </div>
         )}
       </div>

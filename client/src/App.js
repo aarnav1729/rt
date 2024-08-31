@@ -7,6 +7,7 @@ import MemberList from "./components/memberList";
 import AddMemberForm from "./components/AddMemberForm";
 import SearchBar from "./components/SearchBar";
 import AdminLogin from "./components/AdminLogin";
+import AdminDashboard from "./components/AdminDashboard";
 
 const api = axios.create({
   baseURL: "https://rt-1a2q.onrender.com",
@@ -200,6 +201,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<MainApp />} /> {/* Default application page */}
           <Route path="/admin/login" element={<AdminLogin />} /> {/* Admin login page */}
+          <Route path="/admin/dashboard" element={<AdminDashboard />} /> {/* Admin dashboard page */}
         </Routes>
       </div>
     </Router>
