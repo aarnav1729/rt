@@ -88,11 +88,11 @@ const AdminDashboard = () => {
           Admin Dashboard
         </h1>
         <EventSelector events={events} onSelect={setSelectedEvent} />
+        <AddEventForm /> {/* AddEventForm component added here */}
         <SearchBar onSearch={setSearchTerm} />
         {selectedEvent && (
           <div className="mt-4">
             <AddMemberForm onMemberAdded={handleMemberAdded} />
-            <AddEventForm /> {/* AddEventForm component added here */}
             <MemberList
               members={filteredMembers}
               attendance={attendance}
