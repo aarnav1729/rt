@@ -1,10 +1,13 @@
 // src/components/AddEventForm.js
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { FaChevronDown } from 'react-icons/fa';
-import { Map, Geocoder } from 'react-map-gl'; 
+import Map, { Marker } from 'react-map-gl';
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder'; // Import Mapbox Geocoder
+import 'mapbox-gl/dist/mapbox-gl.css'; // Import Mapbox styles
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css'; // Import Geocoder styles
 
-const MAPBOX_API_KEY = 'pk.eyJ1IjoiYWFycmF0ZWQiLCJhIjoiY20waHh3dDZtMGdzaTJrcTVpYnk3ZndweSJ9.x4zDUvTtDYU_xXbyj5Wohg'; 
+const MAPBOX_API_KEY = 'YOUR_MAPBOX_API_KEY'; // Replace with your actual Mapbox API key
 
 const AddEventForm = () => {
   const [newEvent, setNewEvent] = useState({ name: '', date: '', location: '' });
@@ -16,6 +19,7 @@ const AddEventForm = () => {
     zoom: 10,
   });
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const mapRef = useRef();
 
   const toggleFormVisibility = () => {
     setIsFormVisible(!isFormVisible);
@@ -59,13 +63,34 @@ const AddEventForm = () => {
     }
   };
 
-  const handleLocationChange = (event) => {
-    setNewEvent({ ...newEvent, location: event.target.value });
-  };
+  const handleGeocoderViewportChange = useCallback((newViewport) => {
+    setViewport({
+      ...newViewport,
+      transitionDuration: 1000,
+    });
+  }, []);
 
-  const handleGeocoderViewportChange = (viewport) => {
-    setViewport(viewport);
-  };
+  const onMapLoad = useCallback(() => {
+    const geocoder = new MapboxGeocoder({
+      accessToken: MAPBOX_API_KEY,
+      mapboxgl: mapRef.current.getMap(), // Pass the map instance
+      marker: false,
+    });
+
+    geocoder.on('result', (e) => {
+      const { place_name, center } = e.result;
+      setSelectedLocation(place_name);
+      setNewEvent({ ...newEvent, location: place_name });
+      setViewport({
+        ...viewport,
+        latitude: center[1],
+        longitude: center[0],
+        zoom: 14,
+      });
+    });
+
+    mapRef.current.getMap().addControl(geocoder);
+  }, [viewport, newEvent]);
 
   return (
     <div className="mt-4">
@@ -92,14 +117,25 @@ const AddEventForm = () => {
             onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
             className="p-2 border rounded"
           />
-          <Geocoder
-            mapboxApiAccessToken={MAPBOX_API_KEY}
-            onViewportChange={handleGeocoderViewportChange}
-            onResult={(result) => setSelectedLocation(result.result.place_name)}
-            placeholder="Enter Event Location"
-            inputValue={newEvent.location}
-            onChange={handleLocationChange}
-          />
+          <div className="relative">
+            <Map
+              ref={mapRef}
+              {...viewport}
+              onMove={(evt) => setViewport(evt.viewState)}
+              style={{ width: '100%', height: '300px' }}
+              mapboxAccessToken={MAPBOX_API_KEY}
+              onLoad={onMapLoad}
+            >
+              {selectedLocation && (
+                <Marker
+                  latitude={viewport.latitude}
+                  longitude={viewport.longitude}
+                >
+                  <div className="marker"></div>
+                </Marker>
+              )}
+            </Map>
+          </div>
           <button
             className="mt-4 px-4 py-2 bg-green-500 text-white rounded"
             onClick={handleAddEvent}
