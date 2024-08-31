@@ -7,10 +7,10 @@ const attendanceRoutes = require('./routes/attendanceRoutes');
 dotenv.config();
 
 const app = express();
+app.use(cors({ origin: 'https://rotraryattendancetracker.netlify.app' })); // CORS middleware should come first
 app.use(express.json());
 
-app.use(cors({ origin: 'https://rotraryattendancetracker.netlify.app' }));
-
+// Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected'))
   .catch((err) => console.error('MongoDB connection error:', err));
@@ -18,6 +18,7 @@ mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTop
 // Import and start cron jobs
 require('./cronJobs');
 
+// Routes
 app.use('/api/attendance', attendanceRoutes);
 
 app.get('/', (req, res) => {
