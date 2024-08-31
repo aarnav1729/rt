@@ -63,13 +63,6 @@ const AddEventForm = () => {
     }
   };
 
-  const handleGeocoderViewportChange = useCallback((newViewport) => {
-    setViewport({
-      ...newViewport,
-      transitionDuration: 1000,
-    });
-  }, []);
-
   const onMapLoad = useCallback(() => {
     const geocoder = new MapboxGeocoder({
       accessToken: MAPBOX_API_KEY,
