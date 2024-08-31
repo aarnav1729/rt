@@ -1,4 +1,3 @@
-// src/components/AddEventForm.js
 import React, { useState, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { FaChevronDown } from 'react-icons/fa';
@@ -14,9 +13,9 @@ const AddEventForm = () => {
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [viewport, setViewport] = useState({
-    latitude: 37.7749,
-    longitude: -122.4194,
-    zoom: 10,
+    latitude: 17.385044, // Hyderabad latitude
+    longitude: 78.486671, // Hyderabad longitude
+    zoom: 12,
   });
   const [selectedLocation, setSelectedLocation] = useState(null);
   const mapRef = useRef();
@@ -34,6 +33,8 @@ const AddEventForm = () => {
         params: {
           access_token: MAPBOX_API_KEY,
           limit: 1,
+          proximity: `${viewport.longitude},${viewport.latitude}`, // Bias results to Hyderabad
+          bbox: '78.1300,17.2000,78.7100,17.5800', // Optional: Restrict results to Hyderabad area
         },
       });
 
@@ -63,11 +64,23 @@ const AddEventForm = () => {
     }
   };
 
+  const handleGeocoderViewportChange = useCallback((newViewport) => {
+    setViewport({
+      ...newViewport,
+      transitionDuration: 1000,
+    });
+  }, []);
+
   const onMapLoad = useCallback(() => {
     const geocoder = new MapboxGeocoder({
       accessToken: MAPBOX_API_KEY,
       mapboxgl: mapRef.current.getMap(), // Pass the map instance
       marker: false,
+      proximity: {
+        longitude: 78.486671, // Hyderabad longitude
+        latitude: 17.385044,  // Hyderabad latitude
+      },
+      bbox: [78.1300, 17.2000, 78.7100, 17.5800], // Optional: Restrict results to Hyderabad area
     });
 
     geocoder.on('result', (e) => {
