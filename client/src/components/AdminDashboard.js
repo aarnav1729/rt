@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import EventSelector from './EventSelector';
-import MemberList from './MemberList';
+import EventSelector from './eventSelector';
+import MemberList from './memberList';
 import AddMemberForm from './AddMemberForm';
-import AddEventForm from './AddEventForm'; // Import AddEventForm component
+import AddEventForm from './AddEventForm'; 
 import SearchBar from './SearchBar';
 
 const api = axios.create({
