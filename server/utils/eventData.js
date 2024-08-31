@@ -1,15 +1,23 @@
+// eventData.js
 const Event = require('../models/Event');
 
 const seedEvents = async () => {
   const events = [
     { name: 'Induction', date: new Date('2024-06-30'), latitude: 17.432178, longitude: 78.384995 },
-    { name: 'Meeting 2', date: new Date('2024-07-12'), latitude: 17.432178, longitude: 78.384995},
+    { name: 'Meeting 2', date: new Date('2024-07-12'), latitude: 17.432178, longitude: 78.384995 },
     { name: 'CSR Project', date: new Date('2024-07-23'), latitude: 17.432178, longitude: 78.384995 },
+    { name: 'Meeting 3', date: new Date('2024-08-31'), latitude: 17.432178, longitude: 78.384995 },
+    { name: 'Fundraiser', date: new Date('2024-09-13'), latitude: 17.432178, longitude: 78.384995 },
   ];
 
   try {
-    await Event.insertMany(events);
-    console.log('Events seeded');
+    // Remove all existing events
+    const deleteResult = await Event.deleteMany({});
+    console.log(`Existing events cleared: ${deleteResult.deletedCount} events removed.`);
+
+    // Seed new events
+    const insertedEvents = await Event.insertMany(events);
+    console.log(`${insertedEvents.length} events seeded successfully.`);
   } catch (error) {
     console.error('Error seeding events:', error);
   }

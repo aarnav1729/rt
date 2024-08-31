@@ -130,40 +130,40 @@ const addMember = async (req, res) => {
   }
 };
 
+// attendanceController.js
 const sendEmails = async (req, res) => {
   const { eventId, attendance } = req.body;
 
   try {
-    const totalEventsHeld = await Attendance.countDocuments({
-      createdAt: { $lte: new Date() },
-    });
+    // Get the current date to filter past events
+    const currentDate = new Date();
+
+    // Count the number of past events
+    const totalPastEvents = await Event.countDocuments({ date: { $lt: currentDate } });
     const totalEventsInYear = 48; // Assuming 4 events per month
 
     for (const member of attendance) {
       if (!member.emailSent) {
         const memberDetails = await Member.findOne({ email: member.email });
-        const eventsAttended = memberDetails.attendanceCount;
-        const extrapolatedAttendance = (
-          (eventsAttended / totalEventsHeld) *
-          totalEventsInYear
-        ).toFixed(2);
+        const eventsAttended = memberDetails.attendanceCount; // Use attendanceCount from Member schema
+
+        // Calculate extrapolated attendance only if there are past events
+        const extrapolatedAttendance = totalPastEvents > 0
+          ? ((eventsAttended / totalPastEvents) * totalEventsInYear).toFixed(2)
+          : 'N/A';
+
         const emailContent = member.present
-          ? `Your attendance was recorded, thank you for coming.\nYou have attended ${eventsAttended}/${totalEventsHeld} events so far and are on track to attend approximately ${extrapolatedAttendance} out of 48 events this year!`
-          : `We missed you, hope you're at the next one.\nYou have attended ${eventsAttended}/${totalEventsHeld} events so far and are on track to attend approximately ${extrapolatedAttendance} out of 48 events this year!`;
-        await sendEmail(
-          member.email,
-          member.present ? "Attendance Recorded" : "Missed Attendance",
-          emailContent
-        );
+          ? `Your attendance was recorded, thank you for coming.\nYou have attended ${eventsAttended}/${totalPastEvents} events so far and are on track to attend approximately ${extrapolatedAttendance} out of 48 events this year!`
+          : `We missed you, hope you're at the next one.\nYou have attended ${eventsAttended}/${totalPastEvents} events so far and are on track to attend approximately ${extrapolatedAttendance} out of 48 events this year!`;
+
+        await sendEmail(member.email, member.present ? 'Attendance Recorded' : 'Missed Attendance', emailContent);
       }
     }
 
-    res.status(200).json({ message: "Emails sent successfully" });
+    res.status(200).json({ message: 'Emails sent successfully' });
   } catch (error) {
-    console.error("Error sending emails:", error); // Log the detailed error
-    res
-      .status(500)
-      .json({ message: "Error sending emails", error: error.message });
+    console.error('Error sending emails:', error); // Log the detailed error
+    res.status(500).json({ message: 'Error sending emails', error: error.message });
   }
 };
 
