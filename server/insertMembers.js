@@ -5,7 +5,7 @@ const Member = require('./models/Member');
 dotenv.config();
 
 const members = [
-  { name: 'Chiranjeev Saluja', email: 'saluja@premierenergies.com' },
+  { name: 'Chiranjeev Saluja', email: 'webstaxx@gmail.com' },
   { name: 'Aarnav Singh', email: 'aarnavsingh836@gmail.com'},
 ];
 
