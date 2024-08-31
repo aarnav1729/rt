@@ -1,12 +1,21 @@
-// src/components/AddEventForm.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { FaChevronDown } from 'react-icons/fa'; 
+import { useLoadScript, Autocomplete } from '@react-google-maps/api';
+
+const libraries = ["places"]; // Load the 'places' library for autocomplete
 
 const AddEventForm = () => {
   const [newEvent, setNewEvent] = useState({ name: '', date: '', location: '' });
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [autocomplete, setAutocomplete] = useState(null);
+
+  // Load Google Maps API script
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: 'YOUR_GOOGLE_MAPS_API_KEY', // Replace with your actual Google Maps API key
+    libraries,
+  });
 
   const toggleFormVisibility = () => {
     setIsFormVisible(!isFormVisible);
@@ -16,12 +25,11 @@ const AddEventForm = () => {
     try {
       setLoading(true);
 
-      // Use OpenCage Data Geocoding API to convert location to latitude and longitude
-      const geoResponse = await axios.get(`https://api.opencagedata.com/geocode/v1/json`, {
+      // Use Google Maps Geocoding API to convert location to latitude and longitude
+      const geoResponse = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
         params: {
-          key: 'YOUR_OPENCAGE_API_KEY', // Replace with your actual OpenCage API key
-          q: newEvent.location,
-          limit: 1,
+          address: newEvent.location,
+          key: 'YOUR_GOOGLE_MAPS_API_KEY', // Replace with your actual Google Maps API key
         },
       });
 
@@ -31,7 +39,7 @@ const AddEventForm = () => {
         return;
       }
 
-      const { lat, lng } = geoResponse.data.results[0].geometry; // Extract latitude and longitude
+      const { lat, lng } = geoResponse.data.results[0].geometry.location; // Extract latitude and longitude
 
       // Send event data to backend
       await axios.post('https://rt-1a2q.onrender.com/api/attendance/addEvent', {
@@ -50,6 +58,21 @@ const AddEventForm = () => {
       setLoading(false);
     }
   };
+
+  const onLoad = (autocompleteInstance) => {
+    setAutocomplete(autocompleteInstance);
+  };
+
+  const onPlaceChanged = () => {
+    if (autocomplete !== null) {
+      const place = autocomplete.getPlace();
+      setNewEvent({ ...newEvent, location: place.formatted_address });
+    } else {
+      console.log('Autocomplete is not loaded yet!');
+    }
+  };
+
+  if (!isLoaded) return <div>Loading...</div>; // Wait for Google Maps API to load
 
   return (
     <div className="mt-4">
@@ -76,13 +99,15 @@ const AddEventForm = () => {
             onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
             className="p-2 border rounded"
           />
-          <input
-            type="text"
-            placeholder="Event Location"
-            value={newEvent.location}
-            onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })}
-            className="p-2 border rounded"
-          />
+          <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
+            <input
+              type="text"
+              placeholder="Event Location"
+              value={newEvent.location}
+              onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })}
+              className="p-2 border rounded"
+            />
+          </Autocomplete>
           <button
             className="mt-4 px-4 py-2 bg-green-500 text-white rounded"
             onClick={handleAddEvent}
