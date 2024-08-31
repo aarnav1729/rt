@@ -1,13 +1,13 @@
-// src/components/AdminDashboard.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import EventSelector from './eventSelector';
-import MemberList from './memberList';
+import EventSelector from './EventSelector';
+import MemberList from './MemberList';
 import AddMemberForm from './AddMemberForm';
+import AddEventForm from './AddEventForm'; // Import AddEventForm component
 import SearchBar from './SearchBar';
 
 const api = axios.create({
-  baseURL: 'https://rt-1a2q.onrender.com', 
+  baseURL: 'https://rt-1a2q.onrender.com', // Adjust base URL as necessary
 });
 
 const AdminDashboard = () => {
@@ -92,6 +92,7 @@ const AdminDashboard = () => {
         {selectedEvent && (
           <div className="mt-4">
             <AddMemberForm onMemberAdded={handleMemberAdded} />
+            <AddEventForm /> {/* AddEventForm component added here */}
             <MemberList
               members={filteredMembers}
               attendance={attendance}

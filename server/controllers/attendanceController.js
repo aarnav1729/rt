@@ -130,7 +130,6 @@ const addMember = async (req, res) => {
   }
 };
 
-// attendanceController.js
 const sendEmails = async (req, res) => {
   const { eventId, attendance } = req.body;
 
@@ -230,6 +229,21 @@ const adminMarkAttendance = async (req, res) => {
   }
 };
 
+const addEvent = async (req, res) => {
+  const { name, date, latitude, longitude } = req.body;
+
+  try {
+    const newEvent = new Event({ name, date, latitude, longitude });
+    await newEvent.save();
+    res.status(201).json({ message: 'Event added successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error adding event', error: error.message });
+  }
+};
+
+module.exports = { getEvents, getMembers, markAttendance, addMember, sendEmails, adminMarkAttendance, addEvent };
+
+
 module.exports = {
   getEvents,
   getMembers,
@@ -237,4 +251,5 @@ module.exports = {
   addMember,
   sendEmails,
   adminMarkAttendance,
+  addEvent,
 };
