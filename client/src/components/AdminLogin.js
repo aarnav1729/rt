@@ -8,7 +8,7 @@ const AdminLogin = () => {
   const ADMIN_PASSWORD = 'admin'; // Hardcoded password
 
   const handleLogin = () => {
-    if (password === ADMIN_PASSWORD) {
+    if (password.trim() === ADMIN_PASSWORD) { // Ensure trimming input to avoid leading/trailing spaces
       navigate('/admin/dashboard'); // Redirect to Admin Dashboard
     } else {
       alert('Incorrect password');
