@@ -7,7 +7,7 @@ import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder'; // Import Mapbox Geocod
 import 'mapbox-gl/dist/mapbox-gl.css'; // Import Mapbox styles
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css'; // Import Geocoder styles
 
-const MAPBOX_API_KEY = 'YOUR_MAPBOX_API_KEY'; // Replace with your actual Mapbox API key
+const MAPBOX_API_KEY = 'pk.eyJ1IjoiYWFycmF0ZWQiLCJhIjoiY20waHh3dDZtMGdzaTJrcTVpYnk3ZndweSJ9.x4zDUvTtDYU_xXbyj5Wohg'; // Replace with your actual Mapbox API key
 
 const AddEventForm = () => {
   const [newEvent, setNewEvent] = useState({ name: '', date: '', location: '' });
