@@ -1,27 +1,24 @@
 // App.js
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import axios from "axios";
-import EventSelector from "./components/eventSelector";
-import MemberList from "./components/memberList";
+import EventSelector from "./components/EventSelector";
+import MemberList from "./components/MemberList";
 import AddMemberForm from "./components/AddMemberForm";
 import SearchBar from "./components/SearchBar";
-import AdminLogin from "./components/AdminLogin";
-import AdminDashboard from "./components/AdminDashboard";
-import AddEventForm from "./components/AddEventForm";
+import AddEventForm from "./components/AddEventForm"; // Import AddEventForm component
 
 const api = axios.create({
   baseURL: "https://rt-1a2q.onrender.com",
 });
 
-const MainApp = () => {
+const App = () => {
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [members, setMembers] = useState([]);
   const [attendance, setAttendance] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [adminPassword, setAdminPassword] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false); // New state for admin login
+  const [adminPassword, setAdminPassword] = useState(""); // New state for admin password input
 
   useEffect(() => {
     api
@@ -228,8 +225,9 @@ const MainApp = () => {
           <h1 className="text-3xl font-bold mb-4 text-center text-blue-600">
             Rotary Club Attendance
           </h1>
+          {/* Event Selector and Add Event Form for Admin Only */}
           <EventSelector events={events} onSelect={setSelectedEvent} />
-          {/* AddEventForm component placed below EventSelector after login */}
+          {/* AddEventForm component placed below EventSelector after admin login */}
           <AddEventForm /> 
           <SearchBar onSearch={setSearchTerm} />
           {selectedEvent && (
@@ -251,35 +249,6 @@ const MainApp = () => {
         </div>
       )}
     </div>
-  );
-};
-
-const App = () => {
-  return (
-    <Router>
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-        <nav className="bg-white p-4 shadow mb-4 w-full">
-          <ul className="flex justify-center space-x-4">
-            <li>
-              <Link to="/" className="text-blue-500 hover:text-blue-700">
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link to="/admin/login" className="text-blue-500 hover:text-blue-700">
-                Admin Login
-              </Link>
-            </li>
-          </ul>
-        </nav>
-
-        <Routes>
-          <Route path="/" element={<MainApp />} /> {/* Default application page */}
-          <Route path="/admin/login" element={<AdminLogin />} /> {/* Admin login page */}
-          <Route path="/admin/dashboard" element={<AdminDashboard />} /> {/* Admin dashboard page */}
-        </Routes>
-      </div>
-    </Router>
   );
 };
 
