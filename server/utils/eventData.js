@@ -4,10 +4,8 @@ const Event = require('../models/Event');
 const seedEvents = async () => {
   const events = [
     { name: 'Induction', date: new Date('2024-06-30'), latitude: 17.432178, longitude: 78.384995 },
-    { name: 'Meeting 2', date: new Date('2024-07-12'), latitude: 17.432178, longitude: 78.384995 },
-    { name: 'CSR Project', date: new Date('2024-07-23'), latitude: 17.432178, longitude: 78.384995 },
-    { name: 'Meeting 3', date: new Date('2024-08-31'), latitude: 17.432178, longitude: 78.384995 },
-    { name: 'Fundraiser', date: new Date('2024-09-13'), latitude: 17.432178, longitude: 78.384995 },
+    { name: 'Demo', date: new Date('2024-08-31'), latitude: 17.432178, longitude: 78.384995 },
+    { name: 'Meeting 1', date: new Date('2024-09-17'), latitude: 17.432178, longitude: 78.384995 },
   ];
 
   try {

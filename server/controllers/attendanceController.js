@@ -69,22 +69,33 @@ const markAttendance = async (req, res) => {
         const existingRecord = existingAttendance.attendance.find(
           (record) => record.email === member.email
         );
+        
         if (existingRecord) {
-          existingRecord.present = member.present;
+          // Update attendance only if there is a change
+          if (!existingRecord.present && member.present) {
+            existingRecord.present = member.present;
+            // Increment only if member is being marked present for the first time
+            await Member.updateOne(
+              { email: member.email },
+              { $inc: { attendanceCount: 1 } }
+            );
+          } else {
+            existingRecord.present = member.present;
+          }
         } else {
           newAttendanceRecords.push({
             email: member.email,
             present: member.present,
             emailSent: false,
           });
-        }
 
-        // Update member attendance count if marked as present
-        if (member.present) {
-          await Member.updateOne(
-            { email: member.email },
-            { $inc: { attendanceCount: 1 } }
-          );
+          // Increment attendance count only if marked present for the first time
+          if (member.present) {
+            await Member.updateOne(
+              { email: member.email },
+              { $inc: { attendanceCount: 1 } }
+            );
+          }
         }
       }
       existingAttendance.attendance = [
@@ -100,7 +111,7 @@ const markAttendance = async (req, res) => {
           emailSent: false,
         });
 
-        // Update member attendance count if marked as present
+        // Increment attendance count only if marked present for the first time
         if (member.present) {
           await Member.updateOne(
             { email: member.email },
