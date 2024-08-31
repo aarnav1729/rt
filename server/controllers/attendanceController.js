@@ -22,8 +22,8 @@ const getMembers = async (req, res) => {
 };
 
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
-  const R = 6371e3; 
-  const φ1 = lat1 * Math.PI / 180; 
+  const R = 6371e3;
+  const φ1 = lat1 * Math.PI / 180;
   const φ2 = lat2 * Math.PI / 180;
   const Δφ = (lat2 - lat1) * Math.PI / 180;
   const Δλ = (lon1 - lon2) * Math.PI / 180;
@@ -104,11 +104,16 @@ const sendEmails = async (req, res) => {
   const { eventId, attendance } = req.body;
 
   try {
+    const totalEventsHeld = await Attendance.countDocuments({ createdAt: { $lte: new Date() } });
+    const totalEventsInYear = 48; // Assuming 4 events per month
+
     for (const member of attendance) {
       if (!member.emailSent) {
+        const eventsAttended = member.present ? member.__v + 1 : member.__v; //adjust for current event
+        const extrapolatedAttendance = ((eventsAttended / totalEventsHeld) * totalEventsInYear).toFixed(2);
         const emailContent = member.present
-          ? 'Your attendance was recorded, thank you for coming.\nYou have attended 1/1 events this month!'
-          : 'We missed you, hope you\'re at the next one.\nYou have attended 0/1 events this month!';
+        ? `Your attendance was recorded, thank you for coming.\nYou have attended ${eventsAttended}/${totalEventsHeld} events so far and are on track to attend approximately ${extrapolatedAttendance} out of 48 events this year!`
+        : `We missed you, hope you're at the next one.\nYou have attended ${eventsAttended}/${totalEventsHeld} events so far and are on track to attend approximately ${extrapolatedAttendance} out of 48 events this year!`;
         await sendEmail(member.email, member.present ? 'Attendance Recorded' : 'Missed Attendance', emailContent);
       }
     }
@@ -120,4 +125,44 @@ const sendEmails = async (req, res) => {
   }
 };
 
-module.exports = { getEvents, getMembers, markAttendance, addMember, sendEmails };
+// server/controllers/attendanceController.js
+const adminMarkAttendance = async (req, res) => {
+  const { eventId, attendance } = req.body;
+
+  try {
+    const existingAttendance = await Attendance.findOne({ eventId });
+    const newAttendanceRecords = [];
+
+    if (existingAttendance) {
+      attendance.forEach(member => {
+        const existingRecord = existingAttendance.attendance.find(record => record.email === member.email);
+        if (existingRecord) {
+          existingRecord.present = member.present;
+        } else {
+          newAttendanceRecords.push({
+            email: member.email,
+            present: member.present,
+            emailSent: false,
+          });
+        }
+      });
+      existingAttendance.attendance = [...existingAttendance.attendance, ...newAttendanceRecords];
+      await existingAttendance.save();
+    } else {
+      attendance.forEach(member => {
+        newAttendanceRecords.push({
+          email: member.email,
+          present: member.present,
+          emailSent: false,
+        });
+      });
+      await Attendance.create({ eventId, attendance: newAttendanceRecords });
+    }
+
+    res.status(200).json({ message: 'Attendance marked successfully by admin' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { getEvents, getMembers, markAttendance, addMember, sendEmails, adminMarkAttendance }; 
