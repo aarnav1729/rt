@@ -7,8 +7,15 @@ const attendanceRoutes = require('./routes/attendanceRoutes');
 dotenv.config();
 
 const app = express();
-app.use(cors({ origin: 'https://rt-azure.vercel.app/' })); // CORS middleware should come first
+
+app.use(cors({ 
+    origin: '*',  
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],  
+}));
+
 app.use(express.json());
+
+app.use('/attendance', attendanceRoutes);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
