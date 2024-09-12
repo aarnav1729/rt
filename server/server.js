@@ -7,7 +7,7 @@ const attendanceRoutes = require('./routes/attendanceRoutes');
 dotenv.config();
 
 const app = express();
-app.use(cors({ origin: 'https://rotraryattendancetracker.netlify.app' })); // CORS middleware should come first
+app.use(cors({ origin: 'https://rt-azure.vercel.app/' })); // CORS middleware should come first
 app.use(express.json());
 
 // Connect to MongoDB
