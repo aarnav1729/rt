@@ -18,7 +18,7 @@ const MainApp = () => {
   const [members, setMembers] = useState([]);
   const [attendance, setAttendance] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
-  const [showPopup, setShowPopup] = useState("");
+  const [showPopup, setShowPopup] = useState(true);
 
   useEffect(() => {
     api
@@ -168,10 +168,10 @@ const MainApp = () => {
             <h2 className="text-3xl font-bold text-blue-600 text-center mb-2">
               Dear Member
             </h2>
-            <p className="text-lg text-gray-700 text-center mb-6">
+            <h3 className="text-lg text-black font-bold text-center mb-6">
               Welcome to your RCLD Attendance App!
-            </p>
-            <ol className="list-decimal list-inside space-y-3 text-gray-600">
+            </h3>
+            <ol className="list-decimal list-inside space-y-3 text-black">
               <li className="text-lg">Select your Event</li>
               <li className="text-lg">Use the search bar to find your name</li>
               <li className="text-lg">
@@ -182,6 +182,9 @@ const MainApp = () => {
               <li className="text-lg">
                 Make sure to provide location access, or contact Dimple to mark
                 attendance for you
+              </li>
+              <li className="text-lg">
+                <em>Please DO NOT click the "Send Attendance Emails Button"</em>
               </li>
             </ol>
             <div className="flex justify-center mt-6">
