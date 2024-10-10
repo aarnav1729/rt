@@ -1,4 +1,3 @@
-// App.js
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import axios from "axios";
@@ -19,7 +18,7 @@ const MainApp = () => {
   const [members, setMembers] = useState([]);
   const [attendance, setAttendance] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
-  const [showPopup, setShowPopup] = useState(true);
+  const [showPopup, setShowPopup] = useState("");
 
   useEffect(() => {
     api
@@ -71,7 +70,12 @@ const MainApp = () => {
     );
   };
 
-  const markAttendanceWithLocation = async (memberId, present, latitude, longitude) => {
+  const markAttendanceWithLocation = async (
+    memberId,
+    present,
+    latitude,
+    longitude
+  ) => {
     const newAttendance = {
       ...attendance,
       [memberId]: present,
@@ -115,7 +119,7 @@ const MainApp = () => {
       email: member.email,
       present: attendance[member._id] || false,
     }));
-    
+
     api
       .post("/api/attendance/mark", {
         eventId: selectedEvent,
@@ -123,8 +127,13 @@ const MainApp = () => {
       })
       .then(() => {
         api
-          .post("/api/attendance/sendEmails", { eventId: selectedEvent, attendance: attendanceList })
-          .then(() => alert("Attendance submitted and emails sent successfully!"))
+          .post("/api/attendance/sendEmails", {
+            eventId: selectedEvent,
+            attendance: attendanceList,
+          })
+          .then(() =>
+            alert("Attendance submitted and emails sent successfully!")
+          )
           .catch((err) => {
             console.error("Error sending emails:", err);
             alert("Failed to send emails");
@@ -156,13 +165,24 @@ const MainApp = () => {
       {showPopup && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-8 rounded-lg shadow-2xl max-w-lg text-left space-y-6">
-            <h2 className="text-3xl font-bold text-blue-600 text-center mb-2">Dear Member</h2>
-            <p className="text-lg text-gray-700 text-center mb-6">Welcome to your RCLD Attendance App!</p>
+            <h2 className="text-3xl font-bold text-blue-600 text-center mb-2">
+              Dear Member
+            </h2>
+            <p className="text-lg text-gray-700 text-center mb-6">
+              Welcome to your RCLD Attendance App!
+            </p>
             <ol className="list-decimal list-inside space-y-3 text-gray-600">
               <li className="text-lg">Select your Event</li>
               <li className="text-lg">Use the search bar to find your name</li>
-              <li className="text-lg">Click the <span className="font-semibold text-blue-600">Present</span> button next to your name</li>
-              <li className="text-lg">Make sure to provide location access, or contact Dimple to mark attendance for you</li>
+              <li className="text-lg">
+                Click the{" "}
+                <span className="font-semibold text-blue-600">Present</span>{" "}
+                button next to your name
+              </li>
+              <li className="text-lg">
+                Make sure to provide location access, or contact Dimple to mark
+                attendance for you
+              </li>
             </ol>
             <div className="flex justify-center mt-6">
               <button
@@ -175,9 +195,6 @@ const MainApp = () => {
           </div>
         </div>
       )}
-    </div>
-
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
         <h1 className="text-3xl font-bold mb-4 text-center text-blue-600">
           Rotary Club Attendance
@@ -217,7 +234,10 @@ const App = () => {
               </Link>
             </li>
             <li>
-              <Link to="/admin/login" className="text-blue-500 hover:text-blue-700">
+              <Link
+                to="/admin/login"
+                className="text-blue-500 hover:text-blue-700"
+              >
                 Admin Login
               </Link>
             </li>
@@ -225,9 +245,12 @@ const App = () => {
         </nav>
 
         <Routes>
-          <Route path="/" element={<MainApp />} /> {/* Default application page */}
-          <Route path="/admin/login" element={<AdminLogin />} /> {/* Admin login page */}
-          <Route path="/admin/dashboard" element={<AdminDashboard />} /> {/* Admin dashboard page */}
+          <Route path="/" element={<MainApp />} />{" "}
+          {/* Default application page */}
+          <Route path="/admin/login" element={<AdminLogin />} />{" "}
+          {/* Admin login page */}
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />{" "}
+          {/* Admin dashboard page */}
         </Routes>
       </div>
     </Router>
