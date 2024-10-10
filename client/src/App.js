@@ -180,8 +180,8 @@ const MainApp = () => {
                 button next to your name
               </li>
               <li className="text-lg">
-                Make sure to provide location access, or contact Dimple to mark
-                attendance for you
+                Make sure to provide location access, or contact Admin to mark
+                your attendance
               </li>
               <li className="text-lg">
                 <em>Please DO NOT click the "Send Attendance Emails Button"</em>
