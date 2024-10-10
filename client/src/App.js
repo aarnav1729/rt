@@ -19,6 +19,7 @@ const MainApp = () => {
   const [members, setMembers] = useState([]);
   const [attendance, setAttendance] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
+  const [showPopup, setShowPopup] = useState(true);
 
   useEffect(() => {
     api
@@ -151,6 +152,31 @@ const MainApp = () => {
   );
 
   return (
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-8 rounded-lg shadow-2xl max-w-lg text-left space-y-6">
+            <h2 className="text-3xl font-bold text-blue-600 text-center mb-2">Dear Member</h2>
+            <p className="text-lg text-gray-700 text-center mb-6">Welcome to your RCLD Attendance App!</p>
+            <ol className="list-decimal list-inside space-y-3 text-gray-600">
+              <li className="text-lg">Select your Event</li>
+              <li className="text-lg">Use the search bar to find your name</li>
+              <li className="text-lg">Click the <span className="font-semibold text-blue-600">Present</span> button next to your name</li>
+              <li className="text-lg">Make sure to provide location access, or contact Dimple to mark attendance for you</li>
+            </ol>
+            <div className="flex justify-center mt-6">
+              <button
+                className="px-6 py-3 bg-blue-500 text-white rounded-full text-lg font-semibold hover:bg-blue-700 transition duration-300"
+                onClick={() => setShowPopup(false)}
+              >
+                Got it!
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
         <h1 className="text-3xl font-bold mb-4 text-center text-blue-600">
